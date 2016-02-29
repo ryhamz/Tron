@@ -47,32 +47,7 @@ public class playerController : MonoBehaviour {
 		if (Input.GetKeyDown ("space")) {
 			ChooseTurn ();
 		}
-
-		/*
-		//old version
-		if (Input.GetKeyDown ("space")) {
-			float lookAngle = devicePose.Orientation.eulerAngles.y;
-			Vector3 turnQuaternion = playerTransform.rotation.eulerAngles;
-			if (lookAngle > 0 && lookAngle < 40) {
-				turnQuaternion.y +=90;
-		
-				playerTransform.rotation = Quaternion.Euler(turnQuaternion);
-				bikeBody.rotation = Quaternion.Euler(turnQuaternion);
-				startingDir = (startingDir + 1) % 4;
-				Cardboard.SDK.Recenter ();
-
-
-			}
-			if (lookAngle > 40 && lookAngle < 360) {
-				turnQuaternion.y += 270;
-
-				playerTransform.rotation = Quaternion.Euler(turnQuaternion);
-				bikeBody.rotation = Quaternion.Euler(turnQuaternion);
-				startingDir = (startingDir - 1) % 4;
-				Cardboard.SDK.Recenter ();
-
-			}
-		}*/
+			
 
 	}
 
@@ -151,16 +126,6 @@ public class playerController : MonoBehaviour {
 	}
 
 	public void Turn() {
-		/*float turnAngle = devicePose.Orientation.eulerAngles.y;
-		int turnDirection = -1;
-		if (turnAngle > 0 && turnAngle < 360) {
-			turnDirection = 1;
-		}
-		Quaternion turnQuaternion = Quaternion.identity;
-		turnQuaternion.y = turnDirection * (turnAngle%20);
-		//bikeBody.rotation = turnQuaternion;
-		//playerTransform.localRotation = turnQuaternion;
-		*/
 
 		float turnAngle = devicePose.Orientation.eulerAngles.y;
 		//Debug.Log(devicePose.Orientation.eulerAngles.y);
@@ -187,8 +152,7 @@ public class playerController : MonoBehaviour {
 		GetComponent<Rigidbody>().isKinematic = true;
 		GetComponent<Rigidbody>().detectCollisions = false;
 		Instantiate (explosion, playerTransform.position, playerTransform.rotation);
-		//Destroy (gameObject);
-		// Trying out this instead, because destroying the object also destroys the child camera.
+	
 		GetComponent<Renderer>().enabled = false;
 	
 	}
