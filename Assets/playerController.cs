@@ -3,6 +3,7 @@ using System.Collections;
 
 
 //Controls player movement and trail generation.
+
 public class playerController : MonoBehaviour {
 
 	public GameObject explosion;
@@ -30,10 +31,12 @@ public class playerController : MonoBehaviour {
 		startingDir = 0;
 
 		//TODO fix this shit
+		/*
 		Vector3 trailObjectPos = playerTransform.position;
 		trailObjectPos.x -= 3.5f;
 		currTrailObj = (GameObject) Instantiate (trailObject, trailObjectPos, Quaternion.identity); // The initial light trail.
 		currTrailOrigin = currTrailObj.transform.position.x + 2.9f;
+		*/
 
 
 	}
@@ -57,17 +60,19 @@ public class playerController : MonoBehaviour {
 
 		//TODO fix this shit too (or find a new method of doing it)
 		// also want to refactor it into its own function...
+		/*
 		Vector3 currTrailScale = currTrailObj.transform.localScale;
 		Vector3 currTrailPos = currTrailObj.transform.position;
-		float distance = playerTransform.position.x - 2.5f - currTrailOrigin;
-		Debug.Log (distance);
+	
 		if (nextTime % interval == 0) {
-			currTrailPos.x += distance / 2f;
+			currTrailPos.x += 10;
 			currTrailObj.transform.position = currTrailPos;
-			currTrailScale.x += distance / 2f;
+			currTrailScale.x += 10;
 			currTrailObj.transform.localScale = currTrailScale;
 			currTrailOrigin = currTrailObj.transform.position.x + 2.9f;
 		}
+		*/
+
 		/*
 		 //Every <interval> frames, make a block.
 		if (nextTime % interval == 0) {
@@ -148,7 +153,7 @@ public class playerController : MonoBehaviour {
 	}
 
 	void OnTriggerEnter(Collider other) {
-
+		Debug.Log ("feeling triggered");
 		GetComponent<Rigidbody>().isKinematic = true;
 		GetComponent<Rigidbody>().detectCollisions = false;
 		Instantiate (explosion, playerTransform.position, playerTransform.rotation);
