@@ -654,7 +654,7 @@ MonoBehaviour:
   playerTransform: {fileID: 2043113237}
   bikeBody: {fileID: 2043113233}
   mainCamera: {fileID: 161761083}
-  trailObject: {fileID: 170110, guid: 9908829b3b462dd4baa748c059fab2e8, type: 2}
+  trailObject: {fileID: 132302, guid: e94935f844733104fbdc7418c03e7a70, type: 2}
 --- !u!54 &2043113233
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -755,7 +755,7 @@ TrailRenderer:
   m_LightmapParameters: {fileID: 15200, guid: 0000000000000000f000000000000000, type: 0}
   m_SortingLayerID: 0
   m_SortingOrder: 0
-  m_Time: 10
+  m_Time: 1000
   m_StartWidth: 3
   m_EndWidth: 3
   m_Colors:

@@ -14,12 +14,15 @@ public class playerController : MonoBehaviour {
 	public GameObject trailObject;
 
 	private int startingDir; //this will be mod 4. 0 is forward. 1 is right. 2 is back. 3 is left.
+	private bool inTurn;
 
 	Transform cameraTransform;
 	Vector3 forceDirection;
 
 	private GameObject currTrailObj;
 	private float currTrailOrigin;
+
+
 	void Awake() {
 		forceDirection = playerTransform.right;
 	}
@@ -29,14 +32,17 @@ public class playerController : MonoBehaviour {
 		
 		devicePose = Cardboard.SDK.HeadPose;
 		startingDir = 0;
+		inTurn = false;
 
 		//TODO fix this shit
-		/*
+	/*
 		Vector3 trailObjectPos = playerTransform.position;
-		trailObjectPos.x -= 3.5f;
+		trailObjectPos.x -= 3.0f;
 		currTrailObj = (GameObject) Instantiate (trailObject, trailObjectPos, Quaternion.identity); // The initial light trail.
-		currTrailOrigin = currTrailObj.transform.position.x + 2.9f;
-		*/
+		currTrailOrigin = currTrailObj.transform.position.x + 0.4f;
+		double distance = playerTransform.position.x - 2.5 - currTrailOrigin;
+		Debug.Log (distance);
+*/
 
 
 	}
@@ -45,7 +51,7 @@ public class playerController : MonoBehaviour {
 	void Update () {
 		bikeBody.velocity = Vector3.zero;
 		bikeBody.rotation = playerTransform.rotation;
-		bikeBody.AddRelativeForce (Vector3.right * 1000);
+		bikeBody.AddRelativeForce (Vector3.right * 500);
 
 		if (Input.GetKeyDown ("space")) {
 			ChooseTurn ();
@@ -54,7 +60,37 @@ public class playerController : MonoBehaviour {
 
 	}
 
-	int interval = 5;
+	//Call it hacky, but this prevents our turning coroutines from being slightly off.
+	void CorrectRotation() {
+		if (playerTransform.eulerAngles.y > 268 && playerTransform.eulerAngles.y < 272) {
+			Vector3 tempRotation = playerTransform.eulerAngles;
+			tempRotation.y = 270;
+			playerTransform.eulerAngles = tempRotation;
+		}
+
+		if (playerTransform.eulerAngles.y > 358 || playerTransform.eulerAngles.y < 2) {
+			Vector3 tempRotation = playerTransform.eulerAngles;
+			tempRotation.y = 0;
+			playerTransform.eulerAngles = tempRotation;
+		}
+
+		if (playerTransform.eulerAngles.y > 88 && playerTransform.eulerAngles.y < 92) {
+			Vector3 tempRotation = playerTransform.eulerAngles;
+			tempRotation.y = 90;
+			playerTransform.eulerAngles = tempRotation;
+		}
+
+		if (playerTransform.eulerAngles.y > 178 && playerTransform.eulerAngles.y < 182) {
+			Debug.Log ("Correcting forward");
+			Vector3 tempRotation = playerTransform.eulerAngles;
+			tempRotation.y = 180;
+			playerTransform.eulerAngles = tempRotation;
+		}
+
+
+	}
+
+	int interval = 30;
 	float nextTime = 0;
 	void LateUpdate() {
 
@@ -73,11 +109,11 @@ public class playerController : MonoBehaviour {
 		}
 		*/
 
-		/*
+
 		 //Every <interval> frames, make a block.
-		if (nextTime % interval == 0) {
+		if (nextTime % interval == 0 && inTurn == false) {
 			SpawnTrailObject ();
-		}*/
+		}
 		nextTime++;
 	}
 
@@ -89,20 +125,29 @@ public class playerController : MonoBehaviour {
 		else if (lookAngle > 40 && lookAngle < 360)
 			TurnLeft ();
 	}
-		
+
+	float nfmod(float a, float b) {
+		return a - b * Mathf.Floor(a / b);
+	}
+
 	/* perform a left turn */
 	void TurnLeft () {
 		StartCoroutine (PerformTurn(Vector3.down * 90, 0.5f));
 		Cardboard.SDK.Recenter ();
+
+		startingDir = (int)nfmod(startingDir - 1, 4);
+		Debug.Log ("starting dir is now: " + startingDir);
 	}
 
 	/* perform a right turn */
 	void TurnRight () {
 		StartCoroutine (PerformTurn (Vector3.up * 90, 0.5f));
 		Cardboard.SDK.Recenter ();
+		startingDir = (int)nfmod(startingDir + 1, 4);
 	}
 
 	IEnumerator PerformTurn (Vector3 byAngles, float inTime) {
+		inTurn = true;
 		Quaternion fromAngle = playerTransform.rotation;
 		Quaternion toAngle = Quaternion.Euler (playerTransform.eulerAngles + byAngles);
 
@@ -110,22 +155,38 @@ public class playerController : MonoBehaviour {
 			playerTransform.rotation = Quaternion.Lerp (fromAngle, toAngle, t);
 			yield return null;
 		}
-	}
+		CorrectRotation ();
+		inTurn = false;
 
+	}
+		
 
 	void SpawnTrailObject() {
 		Vector3 trailObjectPos = playerTransform.position;
+		Vector3 tempScale = trailObject.transform.localScale;
 		if (startingDir == 0) {
-			trailObjectPos.x -= 5;
+			trailObjectPos.x -= 6;
+			tempScale.z = .8f;
+			tempScale.x = 5;
+			trailObject.transform.localScale = tempScale;
 		}
 		if (startingDir == 1) {
-			trailObjectPos.z += 5;
+			trailObjectPos.z += 6;
+			tempScale.z = 5;
+			tempScale.x = .8f;
+			trailObject.transform.localScale = tempScale;
 		}
 		if (startingDir == 2) {
-			trailObjectPos.x += 5;
+			trailObjectPos.x += 6;
+			tempScale.z = .8f;
+			tempScale.x = 5;
+			trailObject.transform.localScale = tempScale;
 		}
 		if (startingDir == 3) {
-			trailObjectPos.z -= 5;
+			trailObjectPos.z -= 6;
+			tempScale.z = 5;
+			tempScale.x = .8f;
+			trailObject.transform.localScale = tempScale;
 		}
 		Instantiate (trailObject, trailObjectPos, Quaternion.identity);
 	}
