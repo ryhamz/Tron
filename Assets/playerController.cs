@@ -12,6 +12,7 @@ public class playerController : MonoBehaviour {
 	public Rigidbody bikeBody;
 	public Cardboard mainCamera;
 	public GameObject trailObject;
+	public GameObject trailTurnObject;
 
 	private int startingDir; //this will be mod 4. 0 is forward. 1 is right. 2 is back. 3 is left.
 	private bool inTurn;
@@ -21,6 +22,7 @@ public class playerController : MonoBehaviour {
 
 	private GameObject currTrailObj;
 	private float currTrailOrigin;
+	private bool gameOver;
 
 
 	void Awake() {
@@ -29,20 +31,11 @@ public class playerController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		
+		gameOver = false;
 		devicePose = Cardboard.SDK.HeadPose;
 		startingDir = 0;
 		inTurn = false;
 
-		//TODO fix this shit
-	/*
-		Vector3 trailObjectPos = playerTransform.position;
-		trailObjectPos.x -= 3.0f;
-		currTrailObj = (GameObject) Instantiate (trailObject, trailObjectPos, Quaternion.identity); // The initial light trail.
-		currTrailOrigin = currTrailObj.transform.position.x + 0.4f;
-		double distance = playerTransform.position.x - 2.5 - currTrailOrigin;
-		Debug.Log (distance);
-*/
 
 
 	}
@@ -53,7 +46,7 @@ public class playerController : MonoBehaviour {
 		bikeBody.rotation = playerTransform.rotation;
 		bikeBody.AddRelativeForce (Vector3.right * 500);
 
-		if (Input.GetKeyDown ("space")) {
+		if (Input.GetKeyDown ("space") && inTurn == false) {
 			ChooseTurn ();
 		}
 			
@@ -90,29 +83,22 @@ public class playerController : MonoBehaviour {
 
 	}
 
-	int interval = 30;
+	int interval = 35;
 	float nextTime = 0;
 	void LateUpdate() {
 
-		//TODO fix this shit too (or find a new method of doing it)
-		// also want to refactor it into its own function...
-		/*
-		Vector3 currTrailScale = currTrailObj.transform.localScale;
-		Vector3 currTrailPos = currTrailObj.transform.position;
-	
-		if (nextTime % interval == 0) {
-			currTrailPos.x += 10;
-			currTrailObj.transform.position = currTrailPos;
-			currTrailScale.x += 10;
-			currTrailObj.transform.localScale = currTrailScale;
-			currTrailOrigin = currTrailObj.transform.position.x + 2.9f;
-		}
-		*/
-
-
-		 //Every <interval> frames, make a block.
-		if (nextTime % interval == 0 && inTurn == false) {
-			SpawnTrailObject ();
+		// The condition nextTime > 25 lets the cycle start moving before we start spawning.
+		//If we are in a turn, we want to spawn more frequent, smaller objects.
+		if (inTurn) {
+			if (nextTime % 15 == 0 && nextTime > 25 && gameOver == false) {
+				//SpawnTrailObject (inTurn);
+				SpawnTrailObjectAlt(inTurn);
+			}
+		} else { //Every <interval> frames, make a block.
+			if (nextTime % interval == 0 && nextTime > 25 && gameOver == false) {
+				//SpawnTrailObject (inTurn);
+				SpawnTrailObjectAlt(inTurn);
+			}
 		}
 		nextTime++;
 	}
@@ -159,36 +145,78 @@ public class playerController : MonoBehaviour {
 		inTurn = false;
 
 	}
-		
 
-	void SpawnTrailObject() {
-		Vector3 trailObjectPos = playerTransform.position;
-		Vector3 tempScale = trailObject.transform.localScale;
-		if (startingDir == 0) {
-			trailObjectPos.x -= 6;
-			tempScale.z = .8f;
-			tempScale.x = 5;
-			trailObject.transform.localScale = tempScale;
+	//TODO possibly remove this. Replacement for SpawnTrailObject is below.
+	void SpawnTrailObject(bool inTurn) {
+		if (inTurn == false) {
+			Vector3 trailObjectPos = playerTransform.position;
+			Vector3 tempScale = trailObject.transform.localScale;
+			if (startingDir == 0) {
+				trailObjectPos.x -= 6;
+				tempScale.z = .8f;
+				tempScale.x = 5;
+				trailObject.transform.localScale = tempScale;
+			}
+			if (startingDir == 1) {
+				trailObjectPos.z += 6;
+				tempScale.z = 5;
+				tempScale.x = .8f;
+				trailObject.transform.localScale = tempScale;
+			}
+			if (startingDir == 2) {
+				trailObjectPos.x += 6;
+				tempScale.z = .8f;
+				tempScale.x = 5;
+				trailObject.transform.localScale = tempScale;
+			}
+			if (startingDir == 3) {
+				trailObjectPos.z -= 6;
+				tempScale.z = 5;
+				tempScale.x = .8f;
+				trailObject.transform.localScale = tempScale;
+			}
+			Instantiate (trailObject, trailObjectPos, Quaternion.identity);
+		} else {
+			Instantiate (trailTurnObject, playerTransform.position, Quaternion.identity);
+
 		}
-		if (startingDir == 1) {
-			trailObjectPos.z += 6;
-			tempScale.z = 5;
-			tempScale.x = .8f;
-			trailObject.transform.localScale = tempScale;
+	}
+
+	// SpawnTrailObjectAlt spawns trail objects right on the player position, but delays turning on their collider.
+	void SpawnTrailObjectAlt(bool inTurn) {
+		Vector3 tempScale = trailTurnObject.transform.localScale;
+		if (inTurn == false && nextTime % interval == 0 && nextTime > 25) {
+			if (startingDir == 0) {
+				//trailTurnObject.x -= 6;
+				tempScale.z = .8f;
+				tempScale.x = 5;
+				trailTurnObject.transform.localScale = tempScale;
+			}
+			if (startingDir == 1) {
+				//trailTurnObject.z += 6;
+				tempScale.z = 5;
+				tempScale.x = .8f;
+				trailTurnObject.transform.localScale = tempScale;
+			}
+			if (startingDir == 2) {
+				//trailObjectPos.x += 6;
+				tempScale.z = .8f;
+				tempScale.x = 5;
+				trailTurnObject.transform.localScale = tempScale;
+			}
+			if (startingDir == 3) {
+				//trailObjectPos.z -= 6;
+				tempScale.z = 5;
+				tempScale.x = .8f;
+				trailTurnObject.transform.localScale = tempScale;
+			}
+			Instantiate (trailTurnObject, playerTransform.position, Quaternion.identity);
+		} else {
+			tempScale.z = 1.5f;
+			tempScale.x = 1.5f;
+			trailTurnObject.transform.localScale = tempScale;
+			Instantiate (trailTurnObject, playerTransform.position, Quaternion.identity);	
 		}
-		if (startingDir == 2) {
-			trailObjectPos.x += 6;
-			tempScale.z = .8f;
-			tempScale.x = 5;
-			trailObject.transform.localScale = tempScale;
-		}
-		if (startingDir == 3) {
-			trailObjectPos.z -= 6;
-			tempScale.z = 5;
-			tempScale.x = .8f;
-			trailObject.transform.localScale = tempScale;
-		}
-		Instantiate (trailObject, trailObjectPos, Quaternion.identity);
 	}
 
 	public void Turn() {
@@ -215,6 +243,7 @@ public class playerController : MonoBehaviour {
 
 	void OnTriggerEnter(Collider other) {
 		Debug.Log ("feeling triggered");
+		gameOver = true;
 		GetComponent<Rigidbody>().isKinematic = true;
 		GetComponent<Rigidbody>().detectCollisions = false;
 		Instantiate (explosion, playerTransform.position, playerTransform.rotation);
