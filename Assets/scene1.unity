@@ -631,7 +631,6 @@ GameObject:
   - 54: {fileID: 2043113233}
   - 114: {fileID: 2043113232}
   - 96: {fileID: 2043113238}
-  - 114: {fileID: 2043113239}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -655,6 +654,7 @@ MonoBehaviour:
   bikeBody: {fileID: 2043113233}
   mainCamera: {fileID: 161761083}
   trailObject: {fileID: 132302, guid: e94935f844733104fbdc7418c03e7a70, type: 2}
+  trailTurnObject: {fileID: 122906, guid: d7c5cebd95ddaeb42876cc6e6bd6024e, type: 2}
 --- !u!54 &2043113233
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -776,23 +776,6 @@ TrailRenderer:
       rgba: 4291607564
   m_MinVertexDistance: 0.2
   m_Autodestruct: 0
---- !u!114 &2043113239
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 2043113231}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0c3e4a68ad1109ffd00007488d76c639, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  height: 10
-  time: 20
-  alwaysUp: 0
-  minDistance: 0.1
-  startColor: {r: 0.11121324, g: 0.72863865, b: 0.8897059, a: 1}
-  endColor: {r: 0.10980392, g: 0.7254902, b: 0.8862745, a: 1}
 --- !u!1 &2049444832
 GameObject:
   m_ObjectHideFlags: 0
