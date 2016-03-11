@@ -46,34 +46,41 @@ public class playerController : MonoBehaviour {
 		bikeBody.rotation = playerTransform.rotation;
 		bikeBody.AddRelativeForce (Vector3.right * 500);
 
-		if (Input.GetKeyDown ("space") && inTurn == false) {
+		//  Commented this shit out because onCardboardTrigger should 
+		//  take care of it.
+		if (Input.touchCount > 0 && inTurn == false) {
 			ChooseTurn ();
-		}
-			
+		}		
 
 	}
+		
+	//public void onCardboardTrigger() {
+	//	if (inTurn == false) {
+	//		ChooseTurn ();
+	//	}
+	//}
 
 	//Call it hacky, but this prevents our turning coroutines from being slightly off.
 	void CorrectRotation() {
-		if (playerTransform.eulerAngles.y > 268 && playerTransform.eulerAngles.y < 272) {
+		if (playerTransform.eulerAngles.y > 267 && playerTransform.eulerAngles.y < 273) {
 			Vector3 tempRotation = playerTransform.eulerAngles;
 			tempRotation.y = 270;
 			playerTransform.eulerAngles = tempRotation;
 		}
 
-		if (playerTransform.eulerAngles.y > 358 || playerTransform.eulerAngles.y < 2) {
+		if (playerTransform.eulerAngles.y > 357 || playerTransform.eulerAngles.y < 3) {
 			Vector3 tempRotation = playerTransform.eulerAngles;
 			tempRotation.y = 0;
 			playerTransform.eulerAngles = tempRotation;
 		}
 
-		if (playerTransform.eulerAngles.y > 88 && playerTransform.eulerAngles.y < 92) {
+		if (playerTransform.eulerAngles.y > 87 && playerTransform.eulerAngles.y < 93) {
 			Vector3 tempRotation = playerTransform.eulerAngles;
 			tempRotation.y = 90;
 			playerTransform.eulerAngles = tempRotation;
 		}
 
-		if (playerTransform.eulerAngles.y > 178 && playerTransform.eulerAngles.y < 182) {
+		if (playerTransform.eulerAngles.y > 177 && playerTransform.eulerAngles.y < 183) {
 			Debug.Log ("Correcting forward");
 			Vector3 tempRotation = playerTransform.eulerAngles;
 			tempRotation.y = 180;
@@ -103,7 +110,7 @@ public class playerController : MonoBehaviour {
 		nextTime++;
 	}
 
-	void ChooseTurn () {
+	public void ChooseTurn () {
 		float lookAngle = devicePose.Orientation.eulerAngles.y;
 
 		if (lookAngle > 0 && lookAngle < 40)
