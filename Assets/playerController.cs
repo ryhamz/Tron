@@ -13,6 +13,7 @@ public class playerController : MonoBehaviour {
 	public Cardboard mainCamera;
 	public GameObject trailObject;
 	public GameObject trailTurnObject;
+	public AudioClip explodeClip;
 
 	private int startingDir; //this will be mod 4. 0 is forward. 1 is right. 2 is back. 3 is left.
 	private bool inTurn;
@@ -37,14 +38,13 @@ public class playerController : MonoBehaviour {
 		inTurn = false;
 
 
-
 	}
 
 	// Update is called once per frame
 	void Update () {
 		bikeBody.velocity = Vector3.zero;
 		bikeBody.rotation = playerTransform.rotation;
-		bikeBody.AddRelativeForce (Vector3.right * 500);
+		bikeBody.AddRelativeForce (Vector3.right * 1200);
 
 		//  Commented this shit out because onCardboardTrigger should 
 		//  take care of it.
@@ -89,15 +89,16 @@ public class playerController : MonoBehaviour {
 
 
 	}
-
-	int interval = 35;
+	//  TODO Interval should honestly vary automatically based on our choice
+	//  of player speed, but it is hardcoded for now.
+	int interval = 15;  
 	float nextTime = 0;
 	void LateUpdate() {
 
 		// The condition nextTime > 25 lets the cycle start moving before we start spawning.
 		//If we are in a turn, we want to spawn more frequent, smaller objects.
 		if (inTurn) {
-			if (nextTime % 15 == 0 && nextTime > 25 && gameOver == false) {
+			if (nextTime % 10 == 0 && nextTime > 25 && gameOver == false) {
 				//SpawnTrailObject (inTurn);
 				SpawnTrailObjectAlt(inTurn);
 			}
@@ -113,9 +114,9 @@ public class playerController : MonoBehaviour {
 	public void ChooseTurn () {
 		float lookAngle = devicePose.Orientation.eulerAngles.y;
 
-		if (lookAngle > 0 && lookAngle < 40)
+		if (lookAngle > 0 && lookAngle < 90)
 			TurnRight ();
-		else if (lookAngle > 40 && lookAngle < 360)
+		else if (lookAngle > 90 && lookAngle < 360)
 			TurnLeft ();
 	}
 
@@ -249,10 +250,12 @@ public class playerController : MonoBehaviour {
 	}
 
 	void OnTriggerEnter(Collider other) {
+		AudioSource explosionSound = GetComponent <AudioSource>();
 		Debug.Log ("feeling triggered");
 		gameOver = true;
 		GetComponent<Rigidbody>().isKinematic = true;
 		GetComponent<Rigidbody>().detectCollisions = false;
+		explosionSound.PlayOneShot (explodeClip);
 		Instantiate (explosion, playerTransform.position, playerTransform.rotation);
 	
 		GetComponent<Renderer>().enabled = false;
