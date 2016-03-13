@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-
+using UnityEngine.Networking;
 
 //Controls player movement and trail generation.
 
@@ -17,6 +17,7 @@ public class playerController : MonoBehaviour {
 
 	private int startingDir; //this will be mod 4. 0 is forward. 1 is right. 2 is back. 3 is left.
 	private bool inTurn;
+	private NetworkView nView;
 
 	Transform cameraTransform;
 	Vector3 forceDirection;
@@ -28,23 +29,37 @@ public class playerController : MonoBehaviour {
 
 	void Awake() {
 		forceDirection = playerTransform.right;
+		//These are disabled at first in the scene for network purposes
+		GetComponent<AudioSource> ().enabled = true;
+
 	}
+		
+		
 
 	// Use this for initialization
 	void Start () {
+		//  We need this, so a player knows which camera to turn on (their own).
+		//  Without it, all players get 1 shared camera, which is, in fact, awful for gameplay.
+		NetworkIdentity netID = GetComponent <NetworkIdentity> ();
+		if (netID.isLocalPlayer) {
+			mainCamera.gameObject.SetActive (true);
+		}
+
+		nView = GetComponent <NetworkView> ();
 		gameOver = false;
 		devicePose = Cardboard.SDK.HeadPose;
 		startingDir = 0;
 		inTurn = false;
-
-
 	}
+
+
 
 	// Update is called once per frame
 	void Update () {
+		
 		bikeBody.velocity = Vector3.zero;
 		bikeBody.rotation = playerTransform.rotation;
-		bikeBody.AddRelativeForce (Vector3.right * 1200);
+		bikeBody.AddRelativeForce (Vector3.right * 300);
 
 		//  Commented this shit out because onCardboardTrigger should 
 		//  take care of it.
