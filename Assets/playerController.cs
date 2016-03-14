@@ -18,6 +18,7 @@ public class playerController : MonoBehaviour {
 	private int startingDir; //this will be mod 4. 0 is forward. 1 is right. 2 is back. 3 is left.
 	private bool inTurn;
 	private NetworkView nView;
+	private NetworkIdentity netID;
 
 	Transform cameraTransform;
 	Vector3 forceDirection;
@@ -40,7 +41,7 @@ public class playerController : MonoBehaviour {
 	void Start () {
 		//  We need this, so a player knows which camera to turn on (their own).
 		//  Without it, all players get 1 shared camera, which is, in fact, awful for gameplay.
-		NetworkIdentity netID = GetComponent <NetworkIdentity> ();
+		 netID = GetComponent <NetworkIdentity> ();
 		if (netID.isLocalPlayer) {
 			mainCamera.gameObject.SetActive (true);
 		}
@@ -52,18 +53,18 @@ public class playerController : MonoBehaviour {
 		inTurn = false;
 	}
 
-
-
 	// Update is called once per frame
 	void Update () {
-		
+		if (!netID.isLocalPlayer) {
+			return;
+		}
 		bikeBody.velocity = Vector3.zero;
 		bikeBody.rotation = playerTransform.rotation;
 		bikeBody.AddRelativeForce (Vector3.right * 300);
 
 		//  Commented this shit out because onCardboardTrigger should 
 		//  take care of it.
-		if (Input.touchCount > 0 && inTurn == false) {
+		if (Input.touchCount > 0 && inTurn == false || (Input.GetKeyDown("space") && inTurn == false)) {
 			ChooseTurn ();
 		}		
 
