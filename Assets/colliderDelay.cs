@@ -14,7 +14,7 @@ public class colliderDelay : MonoBehaviour {
 	// Update is called once per frame
 	int counter = 0;
 	void Update () {
-		if (counter > 80) {
+		if (counter > 40) {
 			bCollider.enabled = true;
 			bCollider.isTrigger = true;
 		}

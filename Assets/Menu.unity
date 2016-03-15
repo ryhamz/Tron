@@ -228,6 +228,14 @@ Prefab:
       propertyPath: m_Text
       value: 3-player
       objectReference: {fileID: 0}
+    - target: {fileID: 11455030, guid: b273876904bf9ba41877ccfff3f07042, type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 936904131}
+    - target: {fileID: 11455030, guid: b273876904bf9ba41877ccfff3f07042, type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: start2player
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: b273876904bf9ba41877ccfff3f07042, type: 2}
   m_IsPrefabParent: 0

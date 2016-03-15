@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 
 //Controls player movement and trail generation.
 
@@ -14,11 +15,13 @@ public class playerController : MonoBehaviour {
 	public GameObject trailObject;
 	public GameObject trailTurnObject;
 	public AudioClip explodeClip;
+	public GameObject gameOverMenu;
 
 	private int startingDir; //this will be mod 4. 0 is forward. 1 is right. 2 is back. 3 is left.
 	private bool inTurn;
 	private NetworkView nView;
 	private NetworkIdentity netID;
+	private NetworkManager netManager;
 
 	Transform cameraTransform;
 	Vector3 forceDirection;
@@ -39,9 +42,12 @@ public class playerController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		
+		netManager =GameObject.FindObjectOfType <NetworkManager> ();
+		 netID = GetComponent <NetworkIdentity> ();
+
 		//  We need this, so a player knows which camera to turn on (their own).
 		//  Without it, all players get 1 shared camera, which is, in fact, awful for gameplay.
-		 netID = GetComponent <NetworkIdentity> ();
 		if (netID.isLocalPlayer) {
 			mainCamera.gameObject.SetActive (true);
 		}
@@ -51,16 +57,19 @@ public class playerController : MonoBehaviour {
 		devicePose = Cardboard.SDK.HeadPose;
 		startingDir = 0;
 		inTurn = false;
+
 	}
+
 
 	// Update is called once per frame
 	void Update () {
+		Debug.Log ("main cam ID: " + mainCamera.GetInstanceID());
 		if (!netID.isLocalPlayer) {
 			return;
 		}
 		bikeBody.velocity = Vector3.zero;
 		bikeBody.rotation = playerTransform.rotation;
-		bikeBody.AddRelativeForce (Vector3.right * 300);
+		bikeBody.AddRelativeForce (Vector3.right * 400);
 
 		//  Commented this shit out because onCardboardTrigger should 
 		//  take care of it.
@@ -275,7 +284,7 @@ public class playerController : MonoBehaviour {
 		Instantiate (explosion, playerTransform.position, playerTransform.rotation);
 	
 		GetComponent<Renderer>().enabled = false;
-	
+		gameOverMenu.GetComponent<Renderer> ().enabled = true;
 	}
 		
 }
